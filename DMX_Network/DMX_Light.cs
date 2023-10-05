@@ -23,19 +23,13 @@ namespace DMX_Network
 
         public override bool InsertData(List<byte> data)
         {
-            //data.Insert(Address, Red);
-            //data.Insert(Address+1, Green);
-            //data.Insert(Address+2, Blue);
-            //data.Insert(Address+3, White);
-            //data.Insert(Address+4, Amber);
-            //data.Insert(Address+5, UV);
-
-            data[Address] = Red;
-            data[Address + 1] = Green;
-            data[Address + 2] = Blue;
-            data[Address + 3] = White;
-            data[Address + 4] = Amber;
-            data[Address + 5] = UV;
+            //SHEDS Lights are not zero indexed
+            data[Address - 1] = Red;
+            data[Address + 0] = Green;
+            data[Address + 1] = Blue;
+            data[Address + 2] = White;
+            data[Address + 3] = Amber;
+            data[Address + 4] = UV;
             return true; 
         }
 

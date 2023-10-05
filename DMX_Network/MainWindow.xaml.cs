@@ -30,9 +30,20 @@ namespace DMX_Network
             InitializeComponent();
 
             dmxController = new DMX_Controller();
-            dmxLight = new DMX_Light("First Light", 0);
 
-            dmxController.AddDmxNode(dmxLight);
+            dmxLight1 = new DMX_Light("Light 1", 10);
+            dmxLight2 = new DMX_Light("Light 2", 20);
+            dmxLight3 = new DMX_Light("Light 3", 30);
+            dmxLight4 = new DMX_Light("Light 4", 40);
+            dmxLight5 = new DMX_Light("Light 5", 50);
+            dmxLight6 = new DMX_Light("Light 6", 60);
+
+            dmxController.AddDmxNode(dmxLight1);
+            dmxController.AddDmxNode(dmxLight2);
+            dmxController.AddDmxNode(dmxLight3);
+            dmxController.AddDmxNode(dmxLight4);
+            dmxController.AddDmxNode(dmxLight5);
+            dmxController.AddDmxNode(dmxLight6);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -73,14 +84,24 @@ namespace DMX_Network
             {
                 float dt = (DateTime.Now.Ticks - timeStart.Ticks) / 10000000f;
 
-                double amplitude = 254;
-                double freq = 0.5;
+                double amplitude = 200;
+                double freq = 1;
                 double numLights = 6;
                 double phase = 1 / (freq * numLights);
 
-                byte cmd = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 0))) + amplitude / 2);
+                byte cmd1 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 0))) + amplitude / 2);
+                byte cmd2 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 1))) + amplitude / 2);
+                byte cmd3 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 2))) + amplitude / 2);
+                byte cmd4 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 3))) + amplitude / 2);
+                byte cmd5 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 4))) + amplitude / 2);
+                byte cmd6 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 5))) + amplitude / 2);
 
-                dmxLight.White = cmd;
+                dmxLight1.Red = cmd1;
+                dmxLight2.Green = cmd2;
+                dmxLight3.Blue = cmd3;
+                dmxLight4.White = cmd4;
+                dmxLight5.Amber = cmd5;
+                dmxLight6.UV = cmd6;
 
                 //////////////////////////////////
                 dmxController.SendDmxArtNetMsg();
@@ -89,6 +110,12 @@ namespace DMX_Network
         }
 
         DMX_Controller dmxController;
-        DMX_Light dmxLight;
+
+        DMX_Light dmxLight1;
+        DMX_Light dmxLight2;
+        DMX_Light dmxLight3;
+        DMX_Light dmxLight4;
+        DMX_Light dmxLight5;
+        DMX_Light dmxLight6;
     }
 }
