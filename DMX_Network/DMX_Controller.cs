@@ -37,10 +37,9 @@ namespace DMX_Network
 
             dmxPacket.Sequence = msgConter++;
 
-
             foreach (DXM_Interface node in dmxNodes)
             {
-                node.InsertData()
+                node.InsertData(dataArray);
             }
 
             dmxPacket.DmxData = dataArray.ToArray();
@@ -49,7 +48,7 @@ namespace DMX_Network
             sock.SendTo(stream.GetBuffer(), endPoint);
         }
 
-        public void AddDmxNodeToList(DXM_Interface node)
+        public void AddDmxNode(DXM_Interface node)
         {
             dmxNodes.Add(node);
         }

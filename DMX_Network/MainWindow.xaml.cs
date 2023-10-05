@@ -28,6 +28,11 @@ namespace DMX_Network
         public MainWindow()
         {
             InitializeComponent();
+
+            dmxController = new DMX_Controller();
+            dmxLight = new DMX_Light("First Light", 0);
+
+            dmxController.AddDmxNode(dmxLight);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -62,7 +67,28 @@ namespace DMX_Network
             //dmxPacket.WriteData(artBinaryWriter);
             //sock.SendTo(stream.GetBuffer(), endPoint);
 
+            DateTime timeStart = DateTime.Now;
 
+            while (true)
+            {
+                float dt = (DateTime.Now.Ticks - timeStart.Ticks) / 10000000f;
+
+                double amplitude = 254;
+                double freq = 0.5;
+                double numLights = 6;
+                double phase = 1 / (freq * numLights);
+
+                byte cmd = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 0))) + amplitude / 2);
+
+                dmxLight.White = cmd;
+
+                //////////////////////////////////
+                dmxController.SendDmxArtNetMsg();
+                System.Threading.Thread.Sleep(100);
+            }
         }
+
+        DMX_Controller dmxController;
+        DMX_Light dmxLight;
     }
 }
