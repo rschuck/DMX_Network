@@ -13,12 +13,7 @@ namespace DMX_Network
         {
             Name = name;
             Address = address;
-            Red = 0;
-            Green = 0;
-            Blue = 0;
-            White = 0;
-            Amber = 0;
-            UV = 0;
+            Reset();
         }
 
         public override bool InsertData(List<byte> data)
@@ -31,6 +26,16 @@ namespace DMX_Network
             data[Address + 3] = Amber;
             data[Address + 4] = UV;
             return true; 
+        }
+
+        public void Reset ()
+        {
+            Red = 0;
+            Green = 0;
+            Blue = 0;
+            White = 0;
+            Amber = 0;
+            UV = 0;
         }
 
         public string Name { get; set; }

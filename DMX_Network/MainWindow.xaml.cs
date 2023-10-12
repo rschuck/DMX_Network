@@ -84,8 +84,8 @@ namespace DMX_Network
             {
                 float dt = (DateTime.Now.Ticks - timeStart.Ticks) / 10000000f;
 
-                double amplitude = 200;
-                double freq = 1;
+                double amplitude = 255;
+                double freq = 0.5;
                 double numLights = 6;
                 double phase = 1 / (freq * numLights);
 
@@ -96,14 +96,30 @@ namespace DMX_Network
                 byte cmd5 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 4))) + amplitude / 2);
                 byte cmd6 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 5))) + amplitude / 2);
 
-                dmxLight1.Red = cmd1;
-                dmxLight2.Green = cmd2;
-                dmxLight3.Blue = cmd3;
-                dmxLight4.White = cmd4;
-                dmxLight5.Amber = cmd5;
-                dmxLight6.UV = cmd6;
+                int routine = 2;
 
-                //////////////////////////////////
+                switch(routine)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        dmxLight1.Red = cmd1;
+                        dmxLight2.Green = cmd2;
+                        dmxLight3.Blue = cmd3;
+                        dmxLight4.White = cmd4;
+                        dmxLight5.Amber = cmd5;
+                        dmxLight6.UV = cmd6;
+                        break;
+                    case 2:
+                        dmxLight1.UV = cmd1;
+                        dmxLight2.UV = cmd2;
+                        dmxLight3.UV = cmd3;
+                        dmxLight4.UV = cmd4;
+                        dmxLight5.UV = cmd5;
+                        dmxLight6.UV = cmd6;
+                        break;
+                }
+
                 dmxController.SendDmxArtNetMsg();
                 System.Threading.Thread.Sleep(100);
             }
