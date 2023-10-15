@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DMX_Network"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
-
+        <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="50,58,0,0" VerticalAlignment="Top" Width="120"/>
+        <Rectangle x:Name="Indicator1" HorizontalAlignment="Left" Height="49" Margin="135,301,0,0" Stroke="Black" VerticalAlignment="Top" Width="55" Fill="Black"/>
+        <Rectangle x:Name="Indicator2" HorizontalAlignment="Left" Height="49" Margin="221,301,0,0" Stroke="Black" VerticalAlignment="Top" Width="55" Fill="Black"/>
+        <Rectangle x:Name="Indicator3" HorizontalAlignment="Left" Height="49" Margin="307,301,0,0" Stroke="Black" VerticalAlignment="Top" Width="55" Fill="Black"/>
+        <Rectangle x:Name="Indicator4" HorizontalAlignment="Left" Height="49" Margin="398,301,0,0" Stroke="Black" VerticalAlignment="Top" Width="55" Fill="Black"/>
+        <Rectangle x:Name="Indicator5" HorizontalAlignment="Left" Height="49" Margin="488,301,0,0" Stroke="Black" VerticalAlignment="Top" Width="55" Fill="Black"/>
+        <Rectangle x:Name="Indicator6" HorizontalAlignment="Left" Height="49" Margin="573,301,0,0" Stroke="Black" VerticalAlignment="Top" Width="55" Fill="Black"/>
     </Grid>
 </Window>
