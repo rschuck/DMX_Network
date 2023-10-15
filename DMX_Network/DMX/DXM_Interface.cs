@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DMX_Network
+namespace DMX_Network.DMX
 {
     public abstract class DXM_Interface
     {

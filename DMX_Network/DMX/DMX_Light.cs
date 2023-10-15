@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace DMX_Network
+namespace DMX_Network.DMX
 {
     public class DMX_Light : DXM_Interface
     {
-        public DMX_Light(string name, byte address) 
+        public DMX_Light(string name, byte address)
         {
             Name = name;
             Address = address;
@@ -26,10 +26,10 @@ namespace DMX_Network
             data[Address + 2] = White;
             data[Address + 3] = Amber;
             data[Address + 4] = UV;
-            return true; 
+            return true;
         }
 
-        public override void Reset ()
+        public override void Reset()
         {
             Red = 0;
             Green = 0;
@@ -45,6 +45,13 @@ namespace DMX_Network
             Red = Convert.ToByte(color.R);
             Green = Convert.ToByte(color.G);
             Blue = Convert.ToByte(color.B);
+        }
+
+        public void SetFromRGB(byte r, byte g, byte b)
+        {
+            Red = Convert.ToByte(r);
+            Green = Convert.ToByte(g);
+            Blue = Convert.ToByte(b);
         }
 
         public string GetRGBColorCode()
@@ -71,7 +78,7 @@ namespace DMX_Network
             {
                 return System.Drawing.Color.FromArgb(Math.Min((byte)255, Amber), 255, 255, 33);
             }
-            else if(UV > 0)
+            else if (UV > 0)
             {
                 return System.Drawing.Color.FromArgb(Math.Min((byte)255, UV), 229, 204, 255);
             }
@@ -80,7 +87,7 @@ namespace DMX_Network
                 return System.Drawing.Color.FromArgb(255, Red, Green, Blue);
             }
         }
-        
+
 
 
         public string Name { get; set; }

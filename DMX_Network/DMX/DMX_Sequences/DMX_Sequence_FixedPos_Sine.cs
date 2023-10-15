@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Ink;
+using DMX_Network.DMX;
 
-namespace DMX_Network
+namespace DMX_Network.DMX.DMX_Sequences
 {
     public class DMX_Sequence_FixedPos_Sine : DMX_Sequence_Interface
     {
@@ -22,14 +23,14 @@ namespace DMX_Network
 
         public override bool Run()
         {
-            double dt = updateDt * counter++;
+            double t = updateDt * counter++;
 
-            byte cmd1 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 0))) + amplitude / 2);
-            byte cmd2 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 1))) + amplitude / 2);
-            byte cmd3 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 2))) + amplitude / 2);
-            byte cmd4 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 3))) + amplitude / 2);
-            byte cmd5 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 4))) + amplitude / 2);
-            byte cmd6 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 5))) + amplitude / 2);
+            byte cmd1 = (byte)(amplitude / 2 * Math.Sin(2 * Math.PI * freq * (t + phase * 0)) + amplitude / 2);
+            byte cmd2 = (byte)(amplitude / 2 * Math.Sin(2 * Math.PI * freq * (t + phase * 1)) + amplitude / 2);
+            byte cmd3 = (byte)(amplitude / 2 * Math.Sin(2 * Math.PI * freq * (t + phase * 2)) + amplitude / 2);
+            byte cmd4 = (byte)(amplitude / 2 * Math.Sin(2 * Math.PI * freq * (t + phase * 3)) + amplitude / 2);
+            byte cmd5 = (byte)(amplitude / 2 * Math.Sin(2 * Math.PI * freq * (t + phase * 4)) + amplitude / 2);
+            byte cmd6 = (byte)(amplitude / 2 * Math.Sin(2 * Math.PI * freq * (t + phase * 5)) + amplitude / 2);
 
             int routine = 1;
 

@@ -22,6 +22,8 @@ using System.Timers;
 using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Media.Media3D;
+using DMX_Network.DMX;
+using DMX_Network.DMX.DMX_Sequences;
 
 namespace DMX_Network
 {
@@ -53,16 +55,17 @@ namespace DMX_Network
             dmxController.AddDmxNode(dmxLights[5]);
 
             dmxSequences.Add("Fixed Pos Sine", new DMX_Sequence_FixedPos_Sine(dmxLights, 1/ updateFeq));
+            dmxSequences.Add("All RGB Sine", new DMX_Sequence_AllSine(dmxLights, 1 / updateFeq));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DateTime timeStart = DateTime.Now;
 
-            SetTimer();
+            SetTimers();
         }
 
-        void SetTimer()
+        void SetTimers()
         {
             timeStart = DateTime.Now;
 
@@ -70,13 +73,18 @@ namespace DMX_Network
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = TimeSpan.FromMilliseconds(1000/updateFeq);
             dispatcherTimer.Start();
+
+            changeSequence = new System.Windows.Threading.DispatcherTimer();
+            changeSequence.Tick += new EventHandler(changeSequence_Tick);
+            changeSequence.Interval = TimeSpan.FromSeconds(10);
+            changeSequence.Start();
         }
 
         void dispatcherTimer_Tick(object sender, EventArgs e)
         {
             float dt = (DateTime.Now.Ticks - timeStart.Ticks) / 10000000f;
 
-            dmxSequences.ElementAt(0).Value.Run();
+            dmxSequences.ElementAt(dmxActiveSequenceIndex).Value.Run();
 
             Indicator1.Fill = new SolidColorBrush(dmxLights[0].GetWindowsRGBColor());
             Indicator2.Fill = new SolidColorBrush(dmxLights[1].GetWindowsRGBColor());
@@ -88,15 +96,29 @@ namespace DMX_Network
             dmxController.SendDmxArtNetMsg();
         }
 
-        DMX_Controller dmxController;
+        void changeSequence_Tick(object sender, EventArgs e)
+        {
+            if(dmxActiveSequenceIndex+1 >= dmxSequences.Count)
+            {
+                dmxActiveSequenceIndex = 0;
+            }
+            else
+            {
+                dmxActiveSequenceIndex++;
+            }
+            dmxSequences.ElementAt(dmxActiveSequenceIndex).Value.Reset();
+        }
 
+        DMX_Controller dmxController;
         List<DMX_Light> dmxLights;
 
         Dictionary<String, DMX_Sequence_Interface> dmxSequences;
         DMX_Sequence_FixedPos_Sine dmxSeq_FixedPosSine;
+        int dmxActiveSequenceIndex = 0;
 
         DateTime timeStart;
         System.Windows.Threading.DispatcherTimer dispatcherTimer;
+        System.Windows.Threading.DispatcherTimer changeSequence;
 
         double updateFeq = 40;
     }

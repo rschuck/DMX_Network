@@ -9,8 +9,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Haukcode.Rdm;
+using System.Diagnostics.Metrics;
 
-namespace DMX_Network
+namespace DMX_Network.DMX
 {
     public class DMX_Controller
     {
@@ -51,6 +52,14 @@ namespace DMX_Network
         public void AddDmxNode(DXM_Interface node)
         {
             dmxNodes.Add(node);
+        }
+
+        public void Reset()
+        {
+            foreach (var node in dmxNodes)
+            {
+                node.Reset();
+            }
         }
 
         const int dmxMaxNodes = 512;
