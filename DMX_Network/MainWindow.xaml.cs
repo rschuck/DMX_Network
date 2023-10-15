@@ -17,6 +17,11 @@ using System.Windows.Shapes;
 using System.IO;
 using Haukcode.ArtNet.IO;
 using Haukcode.ArtNet.Packets;
+using System.Drawing;
+using System.Timers;
+using System.Threading;
+using System.Windows.Threading;
+using System.Windows.Media.Media3D;
 
 namespace DMX_Network
 {
@@ -30,108 +35,69 @@ namespace DMX_Network
             InitializeComponent();
 
             dmxController = new DMX_Controller();
+            dmxLights = new List<DMX_Light>();
+            dmxSequences = new Dictionary<String, DMX_Sequence_Interface>();
 
-            dmxLight1 = new DMX_Light("Light 1", 10);
-            dmxLight2 = new DMX_Light("Light 2", 20);
-            dmxLight3 = new DMX_Light("Light 3", 30);
-            dmxLight4 = new DMX_Light("Light 4", 40);
-            dmxLight5 = new DMX_Light("Light 5", 50);
-            dmxLight6 = new DMX_Light("Light 6", 60);
+            dmxLights.Add(new DMX_Light("Light 1", 10));
+            dmxLights.Add(new DMX_Light("Light 2", 20));
+            dmxLights.Add(new DMX_Light("Light 3", 30));
+            dmxLights.Add(new DMX_Light("Light 4", 40));
+            dmxLights.Add(new DMX_Light("Light 5", 50));
+            dmxLights.Add(new DMX_Light("Light 6", 60));
 
-            dmxController.AddDmxNode(dmxLight1);
-            dmxController.AddDmxNode(dmxLight2);
-            dmxController.AddDmxNode(dmxLight3);
-            dmxController.AddDmxNode(dmxLight4);
-            dmxController.AddDmxNode(dmxLight5);
-            dmxController.AddDmxNode(dmxLight6);
+            dmxController.AddDmxNode(dmxLights[0]);
+            dmxController.AddDmxNode(dmxLights[1]);
+            dmxController.AddDmxNode(dmxLights[2]);
+            dmxController.AddDmxNode(dmxLights[3]);
+            dmxController.AddDmxNode(dmxLights[4]);
+            dmxController.AddDmxNode(dmxLights[5]);
+
+            dmxSequences.Add("Fixed Pos Sine", new DMX_Sequence_FixedPos_Sine(dmxLights, 1/ updateFeq));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            //const int DmxMaxSize = 512;
-            //List<byte> dataArray = new List<byte>(DmxMaxSize);
-            //for (int x=0; x< DmxMaxSize; x++) { dataArray.Insert(x,0); }
-
-            //DMX_Light light1 = new DMX_Light("First Light", 0);
-            //light1.Green = 225;
-            //light1.InsertData(dataArray);
-            //byte[] bytes = dataArray.ToArray();
-
-
-            /////////////////////////////////////////////////////////////////////////////
-
-            //ArtNetDmxPacket dmxPacket = new ArtNetDmxPacket();
-            //dmxPacket.DmxData = bytes;
-
-            //var stream = new MemoryStream();
-            //var artBinaryWriter = new ArtNetBinaryWriter(stream);
-
-            //Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            //IPAddress serverAddr = IPAddress.Parse("192.168.1.144");
-            //IPEndPoint endPoint = new IPEndPoint(serverAddr, 6454);
-
-            //stream.SetLength(0);
-            //stream.Flush();
-
-            //dmxPacket.Sequence = 0;
-
-            //dmxPacket.WriteData(artBinaryWriter);
-            //sock.SendTo(stream.GetBuffer(), endPoint);
-
             DateTime timeStart = DateTime.Now;
 
-            while (true)
-            {
-                float dt = (DateTime.Now.Ticks - timeStart.Ticks) / 10000000f;
+            SetTimer();
+        }
 
-                double amplitude = 255;
-                double freq = 0.5;
-                double numLights = 6;
-                double phase = 1 / (freq * numLights);
+        void SetTimer()
+        {
+            timeStart = DateTime.Now;
 
-                byte cmd1 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 0))) + amplitude / 2);
-                byte cmd2 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 1))) + amplitude / 2);
-                byte cmd3 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 2))) + amplitude / 2);
-                byte cmd4 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 3))) + amplitude / 2);
-                byte cmd5 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 4))) + amplitude / 2);
-                byte cmd6 = (byte)((amplitude / 2) * Math.Sin(2 * Math.PI * freq * (dt + (phase * 5))) + amplitude / 2);
+            dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            dispatcherTimer.Interval = TimeSpan.FromMilliseconds(1000/updateFeq);
+            dispatcherTimer.Start();
+        }
 
-                int routine = 2;
+        void dispatcherTimer_Tick(object sender, EventArgs e)
+        {
+            float dt = (DateTime.Now.Ticks - timeStart.Ticks) / 10000000f;
 
-                switch(routine)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        dmxLight1.Red = cmd1;
-                        dmxLight2.Green = cmd2;
-                        dmxLight3.Blue = cmd3;
-                        dmxLight4.White = cmd4;
-                        dmxLight5.Amber = cmd5;
-                        dmxLight6.UV = cmd6;
-                        break;
-                    case 2:
-                        dmxLight1.UV = cmd1;
-                        dmxLight2.UV = cmd2;
-                        dmxLight3.UV = cmd3;
-                        dmxLight4.UV = cmd4;
-                        dmxLight5.UV = cmd5;
-                        dmxLight6.UV = cmd6;
-                        break;
-                }
+            dmxSequences.ElementAt(0).Value.Run();
 
-                dmxController.SendDmxArtNetMsg();
-                System.Threading.Thread.Sleep(100);
-            }
+            Indicator1.Fill = new SolidColorBrush(dmxLights[0].GetWindowsRGBColor());
+            Indicator2.Fill = new SolidColorBrush(dmxLights[1].GetWindowsRGBColor());
+            Indicator3.Fill = new SolidColorBrush(dmxLights[2].GetWindowsRGBColor());
+            Indicator4.Fill = new SolidColorBrush(dmxLights[3].GetWindowsRGBColor());
+            Indicator5.Fill = new SolidColorBrush(dmxLights[4].GetWindowsRGBColor());
+            Indicator6.Fill = new SolidColorBrush(dmxLights[5].GetWindowsRGBColor());
+
+            dmxController.SendDmxArtNetMsg();
         }
 
         DMX_Controller dmxController;
 
-        DMX_Light dmxLight1;
-        DMX_Light dmxLight2;
-        DMX_Light dmxLight3;
-        DMX_Light dmxLight4;
-        DMX_Light dmxLight5;
-        DMX_Light dmxLight6;
+        List<DMX_Light> dmxLights;
+
+        Dictionary<String, DMX_Sequence_Interface> dmxSequences;
+        DMX_Sequence_FixedPos_Sine dmxSeq_FixedPosSine;
+
+        DateTime timeStart;
+        System.Windows.Threading.DispatcherTimer dispatcherTimer;
+
+        double updateFeq = 40;
     }
 }

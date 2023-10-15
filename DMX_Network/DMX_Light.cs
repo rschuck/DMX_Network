@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace DMX_Network
 {
@@ -28,7 +29,7 @@ namespace DMX_Network
             return true; 
         }
 
-        public void Reset ()
+        public override void Reset ()
         {
             Red = 0;
             Green = 0;
@@ -37,6 +38,50 @@ namespace DMX_Network
             Amber = 0;
             UV = 0;
         }
+
+        public void SetFromRGBColorCode(string color_code)
+        {
+            System.Drawing.Color color = ColorTranslator.FromHtml(color_code);
+            Red = Convert.ToByte(color.R);
+            Green = Convert.ToByte(color.G);
+            Blue = Convert.ToByte(color.B);
+        }
+
+        public string GetRGBColorCode()
+        {
+            System.Drawing.Color color = GetRGBColor();
+            return ColorTranslator.ToHtml(color);
+        }
+
+        public System.Windows.Media.Color GetWindowsRGBColor()
+        {
+            System.Drawing.Color color = GetRGBColor();
+            System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            return newColor;
+        }
+
+        public System.Drawing.Color GetRGBColor()
+        {
+            //All color code logic exists in this function
+            if (White > 0)
+            {
+                return System.Drawing.Color.FromArgb(Math.Min((byte)255, White), 192, 192, 192);
+            }
+            else if (Amber > 0)
+            {
+                return System.Drawing.Color.FromArgb(Math.Min((byte)255, Amber), 255, 255, 33);
+            }
+            else if(UV > 0)
+            {
+                return System.Drawing.Color.FromArgb(Math.Min((byte)255, UV), 229, 204, 255);
+            }
+            else
+            {
+                return System.Drawing.Color.FromArgb(255, Red, Green, Blue);
+            }
+        }
+        
+
 
         public string Name { get; set; }
 
