@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,32 +13,34 @@ namespace DMX_Network.DMX.DMX_Sequences
         {
             name = "Fixed Position Sine";
             dmxLights = dmx_lights;
-            updateDt = update_dt;
-            amplitude = 255;
-            freq = 0.1;
+            amplitude = 1;
+            freq = 0.2;
+            updateDt = update_dt * freq;
             numColors = 3;
-            phase = 1 / (freq * numColors);
+            countsToCycleColor = (int)(1/ updateDt);
 
-            colorCodes = new List<int>();
-            colorCodes.Add(0x0000ff);
-            colorCodes.Add(0x00ff00);
-            colorCodes.Add(0xff0000);
+            colorCodes = new List<string>();
+            colorCodes.Add("#0000ff");
+            colorCodes.Add("#00ff00");
+            colorCodes.Add("#ff0000");
         }
 
         public override bool Run()
         {
-            double t = updateDt * counter++;
+            //double t = updateDt * counter++;
 
-            byte red = (byte)(amplitude / 2 * Math.Sin(2 * Math.PI * freq * (t + phase * 0)) + amplitude / 2);
-            byte green = (byte)(amplitude / 2 * Math.Sin(2 * Math.PI * freq * (t + phase * 1)) + amplitude / 2);
-            byte blue = (byte)(amplitude / 2 * Math.Sin(2 * Math.PI * freq * (t + phase * 2)) + amplitude / 2);
+            double t = (double)counter++ / (double)countsToCycleColor;
+            int index = (int)(t % colorCodes.Count);
 
-            dmxLights[0].SetFromRGB(red, green, blue);
-            dmxLights[1].SetFromRGB(red, green, blue);
-            dmxLights[2].SetFromRGB(red, green, blue);
-            dmxLights[3].SetFromRGB(red, green, blue);
-            dmxLights[4].SetFromRGB(red, green, blue);
-            dmxLights[5].SetFromRGB(red, green, blue);
+            double cmd = (1 - Math.Cos(2 * Math.PI * t)) / 2;
+
+            System.Drawing.Color color = ColorTranslator.FromHtml(colorCodes[index]);
+            dmxLights[0].SetFromRGB((byte)(color.R * cmd), (byte)(color.G * cmd), (byte)(color.B * cmd));
+            dmxLights[1].SetFromRGB((byte)(color.R * cmd), (byte)(color.G * cmd), (byte)(color.B * cmd));
+            dmxLights[2].SetFromRGB((byte)(color.R * cmd), (byte)(color.G * cmd), (byte)(color.B * cmd));
+            dmxLights[3].SetFromRGB((byte)(color.R * cmd), (byte)(color.G * cmd), (byte)(color.B * cmd));
+            dmxLights[4].SetFromRGB((byte)(color.R * cmd), (byte)(color.G * cmd), (byte)(color.B * cmd));
+            dmxLights[5].SetFromRGB((byte)(color.R * cmd), (byte)(color.G * cmd), (byte)(color.B * cmd));
 
             return true;
         }
@@ -53,9 +56,11 @@ namespace DMX_Network.DMX.DMX_Sequences
         }
 
         List<DMX_Light> dmxLights;
-        List<int> colorCodes;
+        List<string> colorCodes;
 
         int counter;
+
+        int countsToCycleColor;
 
         double updateDt;
         double amplitude;

@@ -55,7 +55,9 @@ namespace DMX_Network
             dmxController.AddDmxNode(dmxLights[5]);
 
             dmxSequences.Add("Fixed Pos Sine", new DMX_Sequence_FixedPos_Sine(dmxLights, 1/ updateFeq));
-            dmxSequences.Add("All RGB Sine", new DMX_Sequence_AllSine(dmxLights, 1 / updateFeq));
+            dmxSequences.Add("All RGB Sine", new DMX_Sequence_AllSineRGB(dmxLights, 1 / updateFeq));
+            dmxSequences.Add("All Sine Any Color", new DMX_Sequence_AllSine(dmxLights, 1 / updateFeq));
+            dmxActiveSequenceIndex = 2;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -76,7 +78,7 @@ namespace DMX_Network
 
             changeSequence = new System.Windows.Threading.DispatcherTimer();
             changeSequence.Tick += new EventHandler(changeSequence_Tick);
-            changeSequence.Interval = TimeSpan.FromSeconds(10);
+            changeSequence.Interval = TimeSpan.FromSeconds(changeRoutinePeriod);
             changeSequence.Start();
         }
 
@@ -121,5 +123,6 @@ namespace DMX_Network
         System.Windows.Threading.DispatcherTimer changeSequence;
 
         double updateFeq = 40;
+        double changeRoutinePeriod = 30;
     }
 }
